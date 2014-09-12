@@ -1,0 +1,44 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, 
+        user-scalable=no, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <style type="text/css">
+        body { margin: 0; padding: 0; background: #000;}
+        canvas { display: block; margin: 0 auto; background: #fff; }
+    </style>
+
+    <script type="text/javascript">
+      (function() {
+        var lastTime = 0;
+        var vendors = ['ms', 'moz', 'webkit', 'o'];
+        for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+          window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+          window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame']
+          || window[vendors[x]+'CancelRequestAnimationFrame'];
+        }
+        if (!window.requestAnimationFrame)
+            window.requestAnimationFrame = function(callback, element) {
+                var currTime = new Date().getTime();
+                var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+                var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+            timeToCall);
+            lastTime = currTime + timeToCall;
+            return id;
+      };
+      if (!window.cancelAnimationFrame)
+        window.cancelAnimationFrame = function(id) {
+         clearTimeout(id);
+      };
+      }());
+    </script>
+    <script type="text/javascript" src='src/game.js'></script>
+    <script type="text/javascript" src='src/entitys.js'></script>
+    <script type="text/javascript" src='src/scenes.js'></script>
+  </head>
+  <body onload="game.init()">
+    <canvas id="canvas">
+  </body>
+</html>
