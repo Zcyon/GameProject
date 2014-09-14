@@ -54,8 +54,6 @@ var game = {
                 var now = game.timestamp();
                 game.dt = (now - game.lastFrame)/1000;
                 game.stopMain = requestAnimationFrame(main);
-                /*game.update(game.dt);
-                game.draw();*/
                 game.currentScene.update(game.dt);
                 game.currentScene.draw();
                 game.lastFrame = now;
