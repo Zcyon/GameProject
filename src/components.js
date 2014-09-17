@@ -28,6 +28,36 @@ var particle_options = {
     jitter: 0
 }
 
+var particle_movement = {
+     maxParticles: 50,
+    size: 5,
+    sizeRandom: 4,
+    speed: 1,
+    speedRandom: 1.2,
+    // Lifespan in frames
+    lifeSpan: 10,
+    lifeSpanRandom: 7,
+    // Angle is calculated clockwise: 12pm is 0deg, 3pm is 90deg etc.
+    angle: 65,
+    angleRandom: 34,
+    startColour: [255, 255, 255, 1],
+    startColourRandom: [255, 255, 255, 0],
+    endColour: [255, 255, 255, 0],
+    endColourRandom: [255, 255, 255, 0],
+    // Only applies when fastMode is off, specifies how sharp the gradients are drawn
+    sharpness: 20,
+    sharpnessRandom: 10,
+    // Random spread from origin
+    spread: 10,
+    // How many frames should this last
+    duration: -1,
+    // Will draw squares instead of circle gradients
+    fastMode: true,
+    gravity: { x: 0, y: 0.1 },
+    // sensible values are 0-3
+    jitter: 0   
+}
+
 Crafty.c('Grid', {
 	init: function() {
 		this.attr({
@@ -138,6 +168,8 @@ Crafty.c('PlayerCharacter', {
     _aceleracionSalto: 10,
 	_flotando: false,
 	_padre: null,
+    _primerpadre: null,
+    _rotacion: 0,
     //Offset con respecto a la propiedad x del padre
     _offsetX: 0,
     //Offset con respecto a la propiedad y del padre
@@ -151,9 +183,10 @@ Crafty.c('PlayerCharacter', {
     },
 
 	init: function() {
-		this.requires('Actor, Color, Collision')
+		this.requires('Actor, Color, Collision, Particles')
 			.color('white')
             .onHit('Trampa', this.destruir)
+            .origin('center')
 			.bind("EnterFrame", this._mover)
 			.bind('KeyDown', function(e) {
                 if(e.key === Crafty.keys.ESC){
@@ -170,9 +203,13 @@ Crafty.c('PlayerCharacter', {
     				}
     			}
 			});
+        this.particles(particle_movement);
     },
 
     setPadre: function(padre) {
+        if(!this._padre) {
+          this._primerpadre = padre;
+        }
         if(padre.has('Plataforma')) {
             this._padre = padre;
         }
@@ -185,6 +222,12 @@ Crafty.c('PlayerCharacter', {
         var coordAnterior;
         var dt = data.dt;
         var dx = Math.round((this.velocidadMov*dt)/1000);
+
+        this.rotation = this._rotation + 1*dt;
+
+        if (this._rotation >= 360) {
+          this.rotation = 0;
+        }
 
         if(this._ubicacion === this._coordenada.ARRIBA || this._ubicacion === this._coordenada.ABAJO) {
             this._offsetX += dx;
@@ -345,7 +388,15 @@ Crafty.c('PlayerCharacter', {
         /*
           Y hacemos respawn... (No sé si será lo más eficiente)
         */
-        this._x = 2 * game.map_grid.tile.width;
-        this._y = 11 * game.map_grid.tile.height;
+        this._visible = false;
+        this._x = 30 * game.map_grid.tile.width +1;
+        this._y = 30 * game.map_grid.tile.height +1;
+        this.timeout(function() {
+          this._x = 2 * game.map_grid.tile.width +1;
+          this._y = 11 * game.map_grid.tile.height +1;
+          this.setPadre(this._primerpadre);
+          this.velocidadMov = Math.abs(this.velocidadMov);
+          this._visible = true;
+        }, 500);
     }
 })

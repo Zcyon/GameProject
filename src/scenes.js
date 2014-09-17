@@ -17,7 +17,7 @@ Crafty.scene('Game', function() {
 	Crafty.e('Trampa').at(18, 5).setWidth(1).setHeight(1).crearMovimiento(22, 5, 50, 0);
 	Crafty.e('Meta').at(20, 2);
 
-	var plataforma1 = Crafty.e('Plataforma').at(2, 11).setWidth(8).setHeight(1);
+	var plataforma1 = Crafty.e('Plataforma').at(3, 11).setWidth(8).setHeight(1);
 	var player = Crafty.e('PlayerCharacter').at(7, 10).setPadre(plataforma1);
  
 });
