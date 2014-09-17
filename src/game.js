@@ -1,67 +1,40 @@
 var game = {
+	map_grid: {
+		width: 24,
+		height: 16,
+		tile: {
+			width: 16,
+			height: 16
+		}
+	},
 
-    width: 600,
-    height: 800,
-    lastFrame: 0,
-    dt: 0,
+	width: function() {
+		return this.map_grid.width * this.map_grid.tile.width;
+	},
 
-    init: function() {
-        game.widthActual = game.width;
-        game.heightActual = game.height;
-        game.ratio = game.width / game.height;
-        game.canvas = document.getElementById('canvas');
-        game.canvas.width = game.width;
-        game.canvas.height = game.height;
-        game.ctx = game.canvas.getContext('2d');
-        game.resize();
-        lastFrame = game.timestamp();
-        game.currentScene = scene1;
-        game.main();
-    },
+	height: function() {
+		return this.map_grid.height * this.map_grid.tile.height;
+	}, 
 
-    resize: function() {
-        game.heightActual = window.innerHeight;
-        game.widthActual = game.heightActual * game.ratio;
-        game.canvas.style.width = game.widthActual + 'px';
-        game.canvas.style.height = game.heightActual + 'px';
-    },
+	setWidth: function(w) {
+		this.map_grid.tile.width = Math.round(w / this.map_grid.width); 
+	},
 
-    renderToCanvas: function(width, height, render, canvas) {
-        canvas = canvas || game.createCanvas(width, height, canvas);
-        render(canvas.getContext('2d'));
-        return canvas;
+	setHeight: function(h) {
+		this.map_grid.tile.height = Math.round(h / this.map_grid.height);
+	},
 
-    },
+	start: function() {
+		game.setWidth(800);
+		game.setHeight(600);
+		Crafty.init(game.width(), game.height());
+		Crafty.background('#D8D8D8');
+		Crafty.timer.steptype('variable');
 
-    createCanvas: function(width, height) {
-        var canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        return canvas;
-    },
-
-    timestamp: function() {
-        return window.performance && window.performance.now ? window.performance.now() : new Date().getTime();
-    },
-
-    resetLastFrame: function() {
-        game.lastFrame = game.timestamp();
-    },
-
-    main: function() {
-        (function () {
-            function main(tFrame) {
-                var now = game.timestamp();
-                game.dt = (now - game.lastFrame)/1000;
-                game.stopMain = requestAnimationFrame(main);
-                game.currentScene.update(game.dt);
-                game.currentScene.draw();
-                game.lastFrame = now;
-            }
-            main();
-        })();
-    },
+		/*
+		  Se activa en primera instancia la pantalla de carga. De no hacerlo,
+		  los sprites no aparecerán.
+		*/
+		Crafty.scene('Loading');
+	}
 }
-
-window.addEventListener('resize', game.resize, false);
-window.addEventListener('focus', game.resetLastFrame, false);

@@ -1,42 +1,49 @@
-var scene = function(name, backGround, entitys) {
-	var _name = name || '',
-		_backGround = backGround || game.createCanvas(game.width, game.height),
-		_cached;
+Crafty.scene('Game', function() {
 
-	game.entitys = entitys;
-	_cached = game.renderToCanvas(game.width, game.height, function(ctx) {
-		for(var i=0; i<game.entitys.length; i++) {
-			if(game.entitys[i].isStatic()) {
-				game.entitys[i].draw(ctx);
-			}
-		}
+
+
+	Crafty.e('Pared').at(0, 0).setWidth(game.map_grid.width);
+	Crafty.e('Pared').at(0, 1).setHeight(game.map_grid.height);
+	Crafty.e('Pared').at(game.map_grid.width - 1, 0).setHeight(game.map_grid.height);
+	Crafty.e('Pared').at(0, game.map_grid.height - 1).setWidth(game.map_grid.width);
+	Crafty.e('Plataforma').at(3, 5).setWidth(1).setHeight(3).crearMovimiento(7, 5, 100, 0);
+	Crafty.e('Plataforma').at(14, 6).setWidth(3).setHeight(1);
+	Crafty.e('Plataforma').at(15, 13).setWidth(1).setHeight(1);
+	Crafty.e('Plataforma').at(20, 12).setWidth(1).setHeight(2);
+	Crafty.e('Plataforma').at(19, 3).setWidth(3).setHeight(1);
+	Crafty.e('Trampa').at(11, 4).setWidth(1).setHeight(1).crearMovimiento(11, 8, 0, 100);
+	Crafty.e('Trampa').at(12, 11).setWidth(1).setHeight(1).crearMovimiento(18, 11, 100, 0);
+	Crafty.e('Trampa').at(18, 9).setWidth(1).setHeight(1).crearMovimiento(22, 10, 100, 0);
+	Crafty.e('Trampa').at(18, 5).setWidth(1).setHeight(1).crearMovimiento(22, 5, 50, 0);
+	Crafty.e('Meta').at(20, 2);
+
+	var plataforma1 = Crafty.e('Plataforma').at(2, 11).setWidth(8).setHeight(1);
+	var player = Crafty.e('PlayerCharacter').at(7, 10).setPadre(plataforma1);
+ 
+});
+
+
+/*
+  Pantalla de carga, imperceptible por el usuario...
+*/
+Crafty.scene('Loading', function() {
+	Crafty.load(['assets/spiked_ball.png', 'assets/coin.png', 'assets/blank.png'], function() {
+
+	  Crafty.sprite(33, 38, 'assets/spiked_ball.png', {
+	  	spr_spike: [0, 0]
+	  });
+
+	  Crafty.sprite(33, 38, 'assets/coin.png', {
+ 		spr_coin: [0, 0]
+	  });
+
+	  Crafty.sprite(33, 38, 'assets/blank.png', {
+	  	spr_blank: [0, 0]
+	  });
+
+	Crafty.scene('Game');
+
 	});
 
-	return {
-		update: function(dt) {
-			for(var i=0; i<game.entitys.length; i++) {
-				if(!game.entitys[i].isStatic()) {
-					game.entitys[i].update(dt);
-				}
-			}
-		},
-		draw: function() {
-			game.ctx.drawImage(_backGround, 0, 0);
-			game.ctx.drawImage(_cached, 0, 0);
-			for(var i=0; i<game.entitys.length; i++) {
-				if(!game.entitys[i].isStatic()) {
-					game.entitys[i].draw(game.ctx);
-				}
-			}
-		}
-	};
-}
-
-var parent =  platform(30, 300, 400, 100);
-var scene1 = scene('nivelPrueba', 
-	game.renderToCanvas(game.width, game.height, function(ctx) {
-		ctx.fillStyle = '#F2F2F2';
-		ctx.fillRect(0, 0, game.width, game.height);
-	}),
-	[parent, platform(10, 100, 100, 100, 300, 100, 150), player(35, 270, 30, 30, 350, parent)]
-);
+	Crafty.audio.add('jump', 'assets/jump.mp3');
+});
